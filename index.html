@@ -1,257 +1,184 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TCO Blacklist</title>
-  <style>
-    :root {
-      --bg: #0f172a;
-      --card-bg: #1e293b;
-      --text: #f8fafc;
-      --accent: #ef4444;
-      --low: #22c55e;
-      --medium: #f59e0b;
-      --high: #ef4444;
-    }
-    body {
-      font-family: system-ui, -apple-system, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      margin: 0;
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-    .container { max-width: 600px; width: 100%; }
-    h1 { text-align: center; color: var(--accent); margin-bottom: 20px; }
-    
-    .search-box, .admin-panel, .card {
-      background: var(--card-bg);
-      padding: 20px;
-      border-radius: 12px;
-      margin-bottom: 20px;
-      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.3);
-    }
-
-    input, select, textarea, button {
-      width: 100%;
-      padding: 12px;
-      margin: 8px 0;
-      border-radius: 8px;
-      border: 1px solid #334155;
-      background: #0f172a;
-      color: white;
-      box-sizing: border-box;
-    }
-
-    button {
-      background: var(--accent);
-      font-weight: bold;
-      border: none;
-      cursor: pointer;
-    }
-
-    .status-clear {
-      text-align: center;
-      padding: 20px;
-      background: #14532d;
-      color: #4ade80;
-      font-weight: bold;
-      border-radius: 8px;
-      font-size: 1.2rem;
-    }
-
-    .badge {
-      display: inline-block;
-      padding: 4px 8px;
-      border-radius: 4px;
-      font-weight: bold;
-      font-size: 0.8rem;
-    }
-    .LOW { background: var(--low); color: black; }
-    .MEDIUM { background: var(--medium); color: black; }
-    .HIGH { background: var(--high); color: white; }
-
-    .hidden { display: none; }
-    .admin-toggle { text-align: right; margin-bottom: 10px; }
-    .admin-toggle button { width: auto; background: #334155; font-size: 0.8rem; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TCO Blacklist</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #121212; color: #ffffff; padding: 20px; }
+        h1, h2 { color: #ff3333; }
+        .card { background-color: #1e1e1e; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #333; }
+        input, button, textarea { padding: 10px; margin: 5px 0; width: 100%; box-sizing: border-box; background: #2a2a2a; color: white; border: 1px solid #444; border-radius: 4px; }
+        button { background-color: #ff3333; border: none; font-weight: bold; cursor: pointer; }
+        button:hover { background-color: #cc0000; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { border: 1px solid #333; padding: 10px; text-align: left; }
+        th { background-color: #2a2a2a; color: #ff3333; }
+        .hidden { display: none; }
+    </style>
 </head>
 <body>
 
-<div class="container">
-  <h1>TCO Blacklist</h1>
+    <h1>TCO Blacklist</h1>
 
-  <div class="admin-toggle">
-    <button onclick="toggleAdmin()">⚙️ Espace Admin</button>
-  </div>
-
-  <!-- PANNEAU ADMIN (Masqué par défaut) -->
-  <div id="adminPanel" class="admin-panel hidden">
-    <h3>Panneau Administration</h3>
-    <div id="loginForm">
-      <input type="password" id="adminPass" placeholder="Mot de passe admin">
-      <button onclick="login()">Se connecter</button>
+    <!-- PUBLIC SECTION (READ ONLY) -->
+    <div class="card">
+        <h2>Blacklisted Players</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Roblox Username</th>
+                    <th>Reason</th>
+                    <th>Date</th>
+                    <th class="admin-only hidden">Action</th>
+                </tr>
+            </thead>
+            <tbody id="blacklist-table">
+                <!-- Players will be listed here -->
+            </tbody>
+        </table>
     </div>
-    
-    <div id="adminControls" class="hidden">
-      <h4 id="formTitle">Ajouter un joueur</h4>
-      <input type="hidden" id="editIndex" value="-1">
-      <input type="text" id="username" placeholder="Username Roblox">
-      <input type="text" id="userId" placeholder="User ID Roblox">
-      <select id="severity">
-        <option value="LOW">LOW</option>
-        <option value="MEDIUM">MEDIUM</option>
-        <option value="HIGH">HIGH</option>
-      </select>
-      <select id="reason">
-        <option value="Griefer">Griefer</option>
-        <option value="Troll">Troll</option>
-        <option value="Exploiter">Exploiter</option>
-        <option value="Boter">Boter</option>
-        <option value="NSFW Displayer">NSFW Displayer</option>
-      </select>
-      <input type="text" id="groups" placeholder="Groupes (séparés par des virgules)">
-      <textarea id="notes" placeholder="Notes complémentaires..."></textarea>
-      <button onclick="savePlayer()">Enregistrer</button>
-      <button onclick="resetForm()" style="background:#475569">Annuler</button>
+
+    <!-- ADMIN LOGIN -->
+    <div class="card" id="login-section">
+        <h2>Admin Login</h2>
+        <input type="password" id="password-input" placeholder="Enter admin password">
+        <button onclick="login()">Log In</button>
+        <p id="error-msg" style="color: red; display: none;">Incorrect password!</p>
     </div>
-  </div>
 
-  <!-- RECHERCHE PUBLIQUE -->
-  <div class="search-box">
-    <input type="text" id="searchInput" placeholder="Entrez un Username ou un User ID..." oninput="search()">
-  </div>
+    <!-- ADMIN PANEL -->
+    <div class="card hidden" id="admin-panel">
+        <h2>Admin Dashboard (Logged In)</h2>
+        <button onclick="logout()" style="background-color: #555;">Log Out</button>
+        <h3>Add Player</h3>
+        <input type="text" id="player-name" placeholder="Roblox Username">
+        <textarea id="player-reason" placeholder="Reason for blacklist"></textarea>
+        <button onclick="addPlayer()">Add to Blacklist</button>
+    </div>
 
-  <!-- RÉSULTATS -->
-  <div id="results"></div>
-</div>
+    <script>
+        // SHA-256 hash of password 'X9#vL2$mP7!kR4qW'
+        const PASSWORD_HASH = "815f15ca85f9502a50a3ee41a1a45749f55e5b3ee58129e612cb7cf5ff9b2e26";
 
-<script>
-  // Mot de passe admin par défaut
-  const ADMIN_PASSWORD = "admin";
+        // SHA-256 Hash Function
+        async function hashString(str) {
+            const buffer = new TextEncoder().encode(str);
+            const digest = await crypto.subtle.digest('SHA-256', buffer);
+            return Array.from(new Uint8Array(digest)).map(b => b.toString(16).padStart(2, '0')).join('');
+        }
 
-  // Base de données locale (chargée ou initialisée)
-  let db = JSON.parse(localStorage.getItem('tco_blacklist')) || [];
-  let isAdmin = false;
+        // Get blacklist from localStorage
+        function getBlacklist() {
+            return JSON.parse(localStorage.getItem('tco_blacklist') || '[]');
+        }
 
-  function saveDB() {
-    localStorage.setItem('tco_blacklist', JSON.stringify(db));
-    search();
-  }
+        function saveBlacklist(list) {
+            localStorage.setItem('tco_blacklist', JSON.stringify(list));
+            renderTable();
+        }
 
-  function toggleAdmin() {
-    document.getElementById('adminPanel').classList.toggle('hidden');
-  }
+        // Admin Login
+        async function login() {
+            const input = document.getElementById('password-input').value;
+            const inputHash = await hashString(input);
 
-  function login() {
-    const pass = document.getElementById('adminPass').value;
-    if(pass === ADMIN_PASSWORD) {
-      isAdmin = true;
-      document.getElementById('loginForm').classList.add('hidden');
-      document.getElementById('adminControls').classList.remove('hidden');
-      search();
-    } else {
-      alert("Mot de passe incorrect !");
-    }
-  }
+            if (inputHash === PASSWORD_HASH) {
+                sessionStorage.setItem('isAdmin', 'true');
+                updateAdminUI(true);
+                document.getElementById('error-msg').style.display = 'none';
+                document.getElementById('password-input').value = '';
+            } else {
+                document.getElementById('error-msg').style.display = 'block';
+            }
+        }
 
-  function savePlayer() {
-    const index = parseInt(document.getElementById('editIndex').value);
-    const playerData = {
-      username: document.getElementById('username').value.trim(),
-      userId: document.getElementById('userId').value.trim(),
-      severity: document.getElementById('severity').value,
-      reason: document.getElementById('reason').value,
-      groups: document.getElementById('groups').value.split(',').map(g => g.trim()).filter(g => g),
-      notes: document.getElementById('notes').value.trim()
-    };
+        function logout() {
+            sessionStorage.removeItem('isAdmin');
+            updateAdminUI(false);
+        }
 
-    if(!playerData.username || !playerData.userId) {
-      alert("Le Username et le User ID sont obligatoires.");
-      return;
-    }
+        function checkAuth() {
+            return sessionStorage.getItem('isAdmin') === 'true';
+        }
 
-    if(index === -1) {
-      db.push(playerData);
-    } else {
-      db[index] = playerData;
-    }
+        // Toggle UI for Admin
+        function updateAdminUI(isAdmin) {
+            const adminPanel = document.getElementById('admin-panel');
+            const loginSection = document.getElementById('login-section');
+            const adminCols = document.querySelectorAll('.admin-only');
 
-    saveDB();
-    resetForm();
-  }
+            if (isAdmin) {
+                adminPanel.classList.remove('hidden');
+                loginSection.classList.add('hidden');
+                adminCols.forEach(col => col.classList.remove('hidden'));
+            } else {
+                adminPanel.classList.add('hidden');
+                loginSection.classList.remove('hidden');
+                adminCols.forEach(col => col.classList.add('hidden'));
+            }
+            renderTable();
+        }
 
-  function editPlayer(index) {
-    const p = db[index];
-    document.getElementById('editIndex').value = index;
-    document.getElementById('username').value = p.username;
-    document.getElementById('userId').value = p.userId;
-    document.getElementById('severity').value = p.severity;
-    document.getElementById('reason').value = p.reason;
-    document.getElementById('groups').value = p.groups.join(', ');
-    document.getElementById('notes').value = p.notes;
-    document.getElementById('formTitle').innerText = "Modifier l'entrée";
-  }
+        // Add Player
+        function addPlayer() {
+            if (!checkAuth()) return;
+            const name = document.getElementById('player-name').value.trim();
+            const reason = document.getElementById('player-reason').value.trim();
 
-  function deletePlayer(index) {
-    if(confirm("Supprimer ce joueur de la blacklist ?")) {
-      db.splice(index, 1);
-      saveDB();
-    }
-  }
+            if (!name || !reason) {
+                alert("Please fill in all fields!");
+                return;
+            }
 
-  function resetForm() {
-    document.getElementById('editIndex').value = "-1";
-    document.getElementById('username').value = "";
-    document.getElementById('userId').value = "";
-    document.getElementById('groups').value = "";
-    document.getElementById('notes').value = "";
-    document.getElementById('formTitle').innerText = "Ajouter un joueur";
-  }
+            const list = getBlacklist();
+            list.push({
+                id: Date.now(),
+                name: name,
+                reason: reason,
+                date: new Date().toLocaleDateString('en-US')
+            });
 
-  function search() {
-    const query = document.getElementById('searchInput').value.trim().toLowerCase();
-    const resultsDiv = document.getElementById('results');
-    resultsDiv.innerHTML = "";
+            saveBlacklist(list);
+            document.getElementById('player-name').value = '';
+            document.getElementById('player-reason').value = '';
+        }
 
-    if(!query) {
-      resultsDiv.innerHTML = "<p style='text-align:center; color:#64748b;'>Entrez un pseudo ou un ID pour vérifier.</p>";
-      return;
-    }
+        // Delete Player
+        function deletePlayer(id) {
+            if (!checkAuth()) return;
+            let list = getBlacklist();
+            list = list.filter(item => item.id !== id);
+            saveBlacklist(list);
+        }
 
-    const matches = db.filter(p => 
-      p.username.toLowerCase().includes(query) || p.userId.toLowerCase().includes(query)
-    );
+        // Render Table
+        function renderTable() {
+            const list = getBlacklist();
+            const tbody = document.getElementById('blacklist-table');
+            const isAdmin = checkAuth();
+            tbody.innerHTML = '';
 
-    if(matches.length === 0) {
-      resultsDiv.innerHTML = `<div class="status-clear">NOT BLACKLISTED</div>`;
-    } else {
-      matches.forEach((p) => {
-        const originalIndex = db.indexOf(p);
-        const card = document.createElement('div');
-        card.className = 'card';
-        card.innerHTML = `
-          <h3>${p.username} <span class="badge ${p.severity}">${p.severity}</span></h3>
-          <p><strong>User ID :</strong> ${p.userId}</p>
-          <p><strong>Raison :</strong> ${p.reason}</p>
-          <p><strong>Groupes :</strong> ${p.groups.length ? p.groups.join(', ') : 'Aucun'}</p>
-          <p><strong>Notes :</strong> ${p.notes || 'Aucune'}</p>
-          ${isAdmin ? `
-            <button onclick="editPlayer(${originalIndex})" style="background:#3b82f6; width:auto; margin-right:5px;">Modifier</button>
-            <button onclick="deletePlayer(${originalIndex})" style="background:#ef4444; width:auto;">Supprimer</button>
-          ` : ''}
-        `;
-        resultsDiv.appendChild(card);
-      });
-    }
-  }
+            if (list.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="' + (isAdmin ? 4 : 3) + '">No blacklisted players found.</td></tr>';
+                return;
+            }
 
-  // Initialisation au chargement
-  search();
-</script>
+            list.forEach(item => {
+                const tr = document.createElement('tr');
+                let html = `<td><strong>${item.name}</strong></td><td>${item.reason}</td><td>${item.date}</td>`;
+                if (isAdmin) {
+                    html += `<td><button onclick="deletePlayer(${item.id})" style="padding: 5px 10px;">Remove</button></td>`;
+                }
+                tr.innerHTML = html;
+                tbody.appendChild(tr);
+            });
+        }
 
+        // Initialize
+        window.onload = function() {
+            updateAdminUI(checkAuth());
+        };
+    </script>
 </body>
 </html>
