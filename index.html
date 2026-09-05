@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TCO Blacklist</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card-bg: #1e293b;
+      --text: #f8fafc;
+      --accent: #ef4444;
+      --low: #22c55e;
+      --medium: #f59e0b;
+      --high: #ef4444;
+    }
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .container { max-width: 600px; width: 100%; }
+    h1 { text-align: center; color: var(--accent); margin-bottom: 20px; }
+    
+    .search-box, .admin-panel, .card {
+      background: var(--card-bg);
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.3);
+    }
+
+    input, select, textarea, button {
+      width: 100%;
+      padding: 12px;
+      margin: 8px 0;
+      border-radius: 8px;
+      border: 1px solid #334155;
+      background: #0f172a;
+      color: white;
+      box-sizing: border-box;
+    }
+
+    button {
+      background: var(--accent);
+      font-weight: bold;
+      border: none;
+      cursor: pointer;
+    }
+
+    .status-clear {
+      text-align: center;
+      padding: 20px;
+      background: #14532d;
+      color: #4ade80;
+      font-weight: bold;
+      border-radius: 8px;
+      font-size: 1.2rem;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-weight: bold;
+      font-size: 0.8rem;
+    }
+    .LOW { background: var(--low); color: black; }
+    .MEDIUM { background: var(--medium); color: black; }
+    .HIGH { background: var(--high); color: white; }
+
+    .hidden { display: none; }
+    .admin-toggle { text-align: right; margin-bottom: 10px; }
+    .admin-toggle button { width: auto; background: #334155; font-size: 0.8rem; }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h1>TCO Blacklist</h1>
+
+  <div class="admin-toggle">
+    <button onclick="toggleAdmin()">⚙️ Espace Admin</button>
+  </div>
+
+  <!-- PANNEAU ADMIN (Masqué par défaut) -->
+  <div id="adminPanel" class="admin-panel hidden">
+    <h3>Panneau Administration</h3>
+    <div id="loginForm">
+      <input type="password" id="adminPass" placeholder="Mot de passe admin">
+      <button onclick="login()">Se connecter</button>
+    </div>
+    
+    <div id="adminControls" class="hidden">
+      <h4 id="formTitle">Ajouter un joueur</h4>
+      <input type="hidden" id="editIndex" value="-1">
+      <input type="text" id="username" placeholder="Username Roblox">
+      <input type="text" id="userId" placeholder="User ID Roblox">
+      <select id="severity">
+        <option value="LOW">LOW</option>
+        <option value="MEDIUM">MEDIUM</option>
+        <option value="HIGH">HIGH</option>
+      </select>
+      <select id="reason">
+        <option value="Griefer">Griefer</option>
+        <option value="Troll">Troll</option>
+        <option value="Exploiter">Exploiter</option>
+        <option value="Boter">Boter</option>
+        <option value="NSFW Displayer">NSFW Displayer</option>
+      </select>
+      <input type="text" id="groups" placeholder="Groupes (séparés par des virgules)">
+      <textarea id="notes" placeholder="Notes complémentaires..."></textarea>
+      <button onclick="savePlayer()">Enregistrer</button>
+      <button onclick="resetForm()" style="background:#475569">Annuler</button>
+    </div>
+  </div>
+
+  <!-- RECHERCHE PUBLIQUE -->
+  <div class="search-box">
+    <input type="text" id="searchInput" placeholder="Entrez un Username ou un User ID..." oninput="search()">
+  </div>
+
+  <!-- RÉSULTATS -->
+  <div id="results"></div>
+</div>
+
+<script>
+  // Mot de passe admin par défaut
+  const ADMIN_PASSWORD = "admin";
+
+  // Base de données locale (chargée ou initialisée)
+  let db = JSON.parse(localStorage.getItem('tco_blacklist')) || [];
+  let isAdmin = false;
+
+  function saveDB() {
+    localStorage.setItem('tco_blacklist', JSON.stringify(db));
+    search();
+  }
+
+  function toggleAdmin() {
+    document.getElementById('adminPanel').classList.toggle('hidden');
+  }
+
+  function login() {
+    const pass = document.getElementById('adminPass').value;
+    if(pass === ADMIN_PASSWORD) {
+      isAdmin = true;
+      document.getElementById('loginForm').classList.add('hidden');
+      document.getElementById('adminControls').classList.remove('hidden');
+      search();
+    } else {
+      alert("Mot de passe incorrect !");
+    }
+  }
+
+  function savePlayer() {
+    const index = parseInt(document.getElementById('editIndex').value);
+    const playerData = {
+      username: document.getElementById('username').value.trim(),
+      userId: document.getElementById('userId').value.trim(),
+      severity: document.getElementById('severity').value,
+      reason: document.getElementById('reason').value,
+      groups: document.getElementById('groups').value.split(',').map(g => g.trim()).filter(g => g),
+      notes: document.getElementById('notes').value.trim()
+    };
+
+    if(!playerData.username || !playerData.userId) {
+      alert("Le Username et le User ID sont obligatoires.");
+      return;
+    }
+
+    if(index === -1) {
+      db.push(playerData);
+    } else {
+      db[index] = playerData;
+    }
+
+    saveDB();
+    resetForm();
+  }
+
+  function editPlayer(index) {
+    const p = db[index];
+    document.getElementById('editIndex').value = index;
+    document.getElementById('username').value = p.username;
+    document.getElementById('userId').value = p.userId;
+    document.getElementById('severity').value = p.severity;
+    document.getElementById('reason').value = p.reason;
+    document.getElementById('groups').value = p.groups.join(', ');
+    document.getElementById('notes').value = p.notes;
+    document.getElementById('formTitle').innerText = "Modifier l'entrée";
+  }
+
+  function deletePlayer(index) {
+    if(confirm("Supprimer ce joueur de la blacklist ?")) {
+      db.splice(index, 1);
+      saveDB();
+    }
+  }
+
+  function resetForm() {
+    document.getElementById('editIndex').value = "-1";
+    document.getElementById('username').value = "";
+    document.getElementById('userId').value = "";
+    document.getElementById('groups').value = "";
+    document.getElementById('notes').value = "";
+    document.getElementById('formTitle').innerText = "Ajouter un joueur";
+  }
+
+  function search() {
+    const query = document.getElementById('searchInput').value.trim().toLowerCase();
+    const resultsDiv = document.getElementById('results');
+    resultsDiv.innerHTML = "";
+
+    if(!query) {
+      resultsDiv.innerHTML = "<p style='text-align:center; color:#64748b;'>Entrez un pseudo ou un ID pour vérifier.</p>";
+      return;
+    }
+
+    const matches = db.filter(p => 
+      p.username.toLowerCase().includes(query) || p.userId.toLowerCase().includes(query)
+    );
+
+    if(matches.length === 0) {
+      resultsDiv.innerHTML = `<div class="status-clear">NOT BLACKLISTED</div>`;
+    } else {
+      matches.forEach((p) => {
+        const originalIndex = db.indexOf(p);
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+          <h3>${p.username} <span class="badge ${p.severity}">${p.severity}</span></h3>
+          <p><strong>User ID :</strong> ${p.userId}</p>
+          <p><strong>Raison :</strong> ${p.reason}</p>
+          <p><strong>Groupes :</strong> ${p.groups.length ? p.groups.join(', ') : 'Aucun'}</p>
+          <p><strong>Notes :</strong> ${p.notes || 'Aucune'}</p>
+          ${isAdmin ? `
+            <button onclick="editPlayer(${originalIndex})" style="background:#3b82f6; width:auto; margin-right:5px;">Modifier</button>
+            <button onclick="deletePlayer(${originalIndex})" style="background:#ef4444; width:auto;">Supprimer</button>
+          ` : ''}
+        `;
+        resultsDiv.appendChild(card);
+      });
+    }
+  }
+
+  // Initialisation au chargement
+  search();
+</script>
+
+</body>
+</html>
