@@ -1,424 +1,385 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TCO Blacklist | Official Database</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --bg-color: #0d0f12;
-            --card-bg: rgba(22, 27, 34, 0.7);
-            --border-color: #30363d;
-            --accent-red: #ff4d4d;
-            --accent-red-hover: #e03e3e;
-            --text-main: #f0f6fc;
-            --text-muted: #8b949e;
-            --input-bg: #0d1117;
-            --success-green: #238636;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TCO Blacklist — Registre Officiel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#111315;
+    --bg-raised:#17191c;
+    --line:#2a2d31;
+    --line-soft:#212327;
+    --ink:#ece8e1;
+    --ink-dim:#94989e;
+    --ink-faint:#5c6066;
+    --high:#e8483c;
+    --high-bg:rgba(232,72,60,0.12);
+    --medium:#e8a23c;
+    --medium-bg:rgba(232,162,60,0.12);
+    --low:#4a9b6e;
+    --low-bg:rgba(74,155,110,0.12);
+  }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-        }
+  *{box-sizing:border-box;margin:0;padding:0;}
 
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            min-height: 100vh;
-            padding: 40px 20px;
-            background-image: radial-gradient(circle at 50% 0%, rgba(255, 77, 77, 0.08), transparent 50%);
-        }
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Space Grotesk',sans-serif;
+    line-height:1.5;
+    min-height:100vh;
+  }
 
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-        }
+  .mono{font-family:'IBM Plex Mono',monospace;}
 
-        header {
-            text-align: center;
-            margin-bottom: 40px;
-        }
+  .masthead{
+    border-bottom:1px solid var(--line);
+    padding:28px 32px;
+    display:flex;
+    align-items:flex-end;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    gap:16px;
+  }
 
-        header h1 {
-            font-size: 2.2rem;
-            font-weight: 700;
-            color: var(--text-main);
-            letter-spacing: -0.5px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-        }
+  .masthead-title{
+    font-size:1.9rem;
+    font-weight:700;
+    letter-spacing:-0.02em;
+  }
 
-        header h1 span {
-            color: var(--accent-red);
-        }
+  .masthead-title .dim{color:var(--ink-faint);font-weight:500;}
 
-        header p {
-            color: var(--text-muted);
-            font-size: 0.95rem;
-            margin-top: 8px;
-        }
+  .masthead-sub{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:0.78rem;
+    color:var(--ink-faint);
+    margin-top:4px;
+  }
 
-        .card {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 24px;
-            margin-bottom: 24px;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 8px 24px rgba(0,0,0,0.3);
-        }
+  .masthead-stat{
+    text-align:right;
+  }
 
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
+  .masthead-stat .num{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:1.6rem;
+    font-weight:600;
+    color:var(--ink);
+    line-height:1;
+  }
 
-        h2 {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: var(--text-main);
-        }
+  .masthead-stat .label{
+    font-size:0.78rem;
+    color:var(--ink-faint);
+    margin-top:4px;
+  }
 
-        /* Table Design */
-        .table-container {
-            overflow-x: auto;
-        }
+  .search-zone{
+    padding:40px 32px 24px;
+    max-width:920px;
+    margin:0 auto;
+  }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            text-align: left;
-        }
+  .search-row{
+    display:flex;
+    border:1px solid var(--line);
+    background:var(--bg-raised);
+    border-radius:4px;
+    overflow:hidden;
+    transition:border-color 0.15s;
+  }
 
-        th {
-            background-color: rgba(255, 255, 255, 0.02);
-            color: var(--text-muted);
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            padding: 12px 16px;
-            border-bottom: 1px solid var(--border-color);
-        }
+  .search-row:focus-within{
+    border-color:var(--ink-faint);
+  }
 
-        td {
-            padding: 16px;
-            border-bottom: 1px solid var(--border-color);
-            font-size: 0.95rem;
-        }
+  .search-row input{
+    flex:1;
+    background:transparent;
+    border:none;
+    outline:none;
+    padding:16px 18px;
+    color:var(--ink);
+    font-family:'IBM Plex Mono',monospace;
+    font-size:0.95rem;
+  }
 
-        tr:last-child td {
-            border-bottom: none;
-        }
+  .search-row input::placeholder{
+    color:var(--ink-faint);
+  }
 
-        .player-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            font-weight: 600;
-            color: #ffffff;
-        }
+  .search-row .search-icon{
+    display:flex;
+    align-items:center;
+    padding-left:18px;
+    color:var(--ink-faint);
+  }
 
-        .tag-red {
-            background: rgba(255, 77, 77, 0.15);
-            color: var(--accent-red);
-            border: 1px solid rgba(255, 77, 77, 0.3);
-            padding: 4px 8px;
-            border-radius: 6px;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
+  .filter-chips{
+    display:flex;
+    gap:8px;
+    margin-top:14px;
+    flex-wrap:wrap;
+  }
 
-        /* Forms & Inputs */
-        .form-group {
-            margin-bottom: 16px;
-        }
+  .chip{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:0.78rem;
+    padding:6px 12px;
+    border:1px solid var(--line);
+    border-radius:3px;
+    color:var(--ink-dim);
+    background:transparent;
+    cursor:pointer;
+    transition:all 0.12s;
+  }
 
-        label {
-            display: block;
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            margin-bottom: 6px;
-        }
+  .chip:hover{
+    border-color:var(--ink-faint);
+    color:var(--ink);
+  }
 
-        input[type="text"],
-        input[type="password"],
-        textarea {
-            width: 100%;
-            padding: 12px 14px;
-            background: var(--input-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            color: var(--text-main);
-            font-size: 0.95rem;
-            transition: border-color 0.2s;
-        }
+  .chip.active{
+    background:var(--ink);
+    color:var(--bg);
+    border-color:var(--ink);
+  }
 
-        input:focus, textarea:focus {
-            outline: none;
-            border-color: var(--accent-red);
-        }
+  .ledger{
+    max-width:920px;
+    margin:0 auto;
+    padding:0 32px 80px;
+  }
 
-        textarea {
-            resize: vertical;
-            min-height: 80px;
-        }
+  .ledger-head{
+    display:grid;
+    grid-template-columns:1.4fr 0.7fr 1.6fr 1fr;
+    padding:10px 4px;
+    border-bottom:1px solid var(--line);
+    font-family:'IBM Plex Mono',monospace;
+    font-size:0.72rem;
+    color:var(--ink-faint);
+    letter-spacing:0.03em;
+  }
 
-        /* Buttons */
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 10px 18px;
-            font-size: 0.9rem;
-            font-weight: 600;
-            border-radius: 8px;
-            border: none;
-            cursor: pointer;
-            transition: all 0.2s;
-            width: 100%;
-        }
+  .entry{
+    display:grid;
+    grid-template-columns:1.4fr 0.7fr 1.6fr 1fr;
+    padding:18px 4px;
+    border-bottom:1px solid var(--line-soft);
+    align-items:center;
+    gap:8px;
+  }
 
-        .btn-primary {
-            background: var(--accent-red);
-            color: white;
-        }
+  .entry .username{
+    font-family:'IBM Plex Mono',monospace;
+    font-weight:600;
+    font-size:0.95rem;
+  }
 
-        .btn-primary:hover {
-            background: var(--accent-red-hover);
-        }
+  .entry .groups{
+    font-size:0.78rem;
+    color:var(--ink-faint);
+    margin-top:3px;
+  }
 
-        .btn-secondary {
-            background: #21262d;
-            color: var(--text-main);
-            border: 1px solid var(--border-color);
-            width: auto;
-        }
+  .rank{
+    display:inline-block;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:0.72rem;
+    font-weight:600;
+    padding:4px 9px;
+    border-radius:3px;
+    width:fit-content;
+    letter-spacing:0.02em;
+  }
 
-        .btn-secondary:hover {
-            background: #30363d;
-        }
+  .rank.high{color:var(--high);background:var(--high-bg);}
+  .rank.medium{color:var(--medium);background:var(--medium-bg);}
+  .rank.low{color:var(--low);background:var(--low-bg);}
 
-        .btn-danger-sm {
-            background: rgba(255, 77, 77, 0.15);
-            color: var(--accent-red);
-            border: 1px solid rgba(255, 77, 77, 0.3);
-            padding: 6px 12px;
-            font-size: 0.8rem;
-            width: auto;
-        }
+  .entry .reason{
+    font-size:0.88rem;
+    color:var(--ink-dim);
+  }
 
-        .btn-danger-sm:hover {
-            background: var(--accent-red);
-            color: white;
-        }
+  .entry .date{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:0.78rem;
+    color:var(--ink-faint);
+    text-align:right;
+  }
 
-        .error-message {
-            color: var(--accent-red);
-            font-size: 0.85rem;
-            margin-top: 10px;
-            display: none;
-        }
+  .state-msg{
+    text-align:center;
+    padding:60px 20px;
+    color:var(--ink-faint);
+    font-family:'IBM Plex Mono',monospace;
+    font-size:0.85rem;
+  }
 
-        .hidden {
-            display: none !important;
-        }
+  .state-msg.error{color:var(--high);}
 
-        @media (max-width: 600px) {
-            body { padding: 20px 12px; }
-            .card { padding: 16px; }
-        }
-    </style>
+  footer{
+    text-align:center;
+    padding:24px;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:0.72rem;
+    color:var(--ink-faint);
+    border-top:1px solid var(--line);
+  }
+
+  @media(max-width:640px){
+    .masthead{padding:20px;}
+    .masthead-title{font-size:1.4rem;}
+    .search-zone{padding:28px 20px 20px;}
+    .ledger{padding:0 20px 60px;}
+    .ledger-head{display:none;}
+    .entry{
+      grid-template-columns:1fr;
+      gap:6px;
+      padding:16px 0;
+    }
+    .entry .date{text-align:left;}
+  }
+</style>
 </head>
 <body>
 
-    <div class="container">
-        <header>
-            <h1>TCO <span>Blacklist</span></h1>
-            <p>Official Public Registry & Enforcement Database</p>
-        </header>
-
-        <!-- PUBLIC SECTION -->
-        <div class="card">
-            <div class="card-header">
-                <h2>Blacklisted Players</h2>
-                <span id="player-count" class="tag-red">0 Total</span>
-            </div>
-            <div class="table-container">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Roblox Username</th>
-                            <th>Reason</th>
-                            <th>Date Added</th>
-                            <th class="admin-only hidden">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody id="blacklist-table">
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- ADMIN LOGIN -->
-        <div class="card" id="login-section">
-            <h2>Admin Authentication</h2>
-            <p style="color: var(--text-muted); font-size: 0.85rem; margin: 6px 0 16px 0;">Sign in to add or manage blacklisted records.</p>
-            <div class="form-group">
-                <input type="password" id="password-input" placeholder="Enter admin passkey">
-            </div>
-            <button class="btn btn-primary" onclick="login()">Log In</button>
-            <p id="error-msg" class="error-message">Invalid administrator credentials.</p>
-        </div>
-
-        <!-- ADMIN PANEL -->
-        <div class="card hidden" id="admin-panel">
-            <div class="card-header">
-                <h2>Admin Control Panel</h2>
-                <button class="btn btn-secondary" onclick="logout()">Log Out</button>
-            </div>
-            <div class="form-group">
-                <label for="player-name">Roblox Username</label>
-                <input type="text" id="player-name" placeholder="e.g. TargetUsername">
-            </div>
-            <div class="form-group">
-                <label for="player-reason">Reason for Blacklist</label>
-                <textarea id="player-reason" placeholder="Detail the violation..."></textarea>
-            </div>
-            <button class="btn btn-primary" onclick="addPlayer()">Add Player Record</button>
-        </div>
+  <div class="masthead">
+    <div>
+      <div class="masthead-title">TCO <span class="dim">Blacklist</span></div>
+      <div class="masthead-sub">registre public — communauté TCO</div>
     </div>
+    <div class="masthead-stat">
+      <div class="num mono" id="total-count">—</div>
+      <div class="label">joueurs recensés</div>
+    </div>
+  </div>
 
-    <script>
-        // Password: AdminTCO2026!
-        const PASSWORD_HASH = "82dd8f1b672a9e334d70ef2417ec6e3cfda04ea7e909dafa8d264f33bd2f6430";
+  <div class="search-zone">
+    <div class="search-row">
+      <span class="search-icon">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      </span>
+      <input type="text" id="search-input" placeholder="Rechercher un pseudo Roblox…">
+    </div>
+    <div class="filter-chips">
+      <button class="chip active" data-rank="all">Tous</button>
+      <button class="chip" data-rank="high">High</button>
+      <button class="chip" data-rank="medium">Medium</button>
+      <button class="chip" data-rank="low">Low</button>
+    </div>
+  </div>
 
-        async function hashString(str) {
-            const buffer = new TextEncoder().encode(str);
-            const digest = await crypto.subtle.digest('SHA-256', buffer);
-            return Array.from(new Uint8Array(digest)).map(b => b.toString(16).padStart(2, '0')).join('');
-        }
+  <div class="ledger">
+    <div class="ledger-head">
+      <span>Pseudo</span>
+      <span>Rang</span>
+      <span>Raison</span>
+      <span style="text-align:right;">Ajouté</span>
+    </div>
+    <div id="entries-container">
+      <div class="state-msg" id="loading-msg">Chargement du registre…</div>
+    </div>
+  </div>
 
-        function getBlacklist() {
-            return JSON.parse(localStorage.getItem('tco_blacklist') || '[]');
-        }
+  <footer>TCO Blacklist — dernière synchronisation en direct depuis le registre officiel</footer>
 
-        function saveBlacklist(list) {
-            localStorage.setItem('tco_blacklist', JSON.stringify(list));
-            renderTable();
-        }
+<script>
+  /* ============================================================
+     CONFIGURATION — à remplir avec tes identifiants Airtable
+     ============================================================ */
+  const AIRTABLE_BASE_ID = "appLU0A0AjAthgB5z";
+  const AIRTABLE_TABLE_NAME = "tco blacklist";
+  const AIRTABLE_TOKEN = "const AIRTABLE_TOKEN = "patABCDEFGHIJKL" + "MNOP.1234567890abcdef";
+";
+  /* ============================================================ */
 
-        async function login() {
-            const input = document.getElementById('password-input').value.trim();
-            const inputHash = await hashString(input);
+  let allEntries = [];
+  let currentRankFilter = "all";
+  let currentSearch = "";
 
-            if (inputHash === PASSWORD_HASH) {
-                sessionStorage.setItem('isAdmin', 'true');
-                updateAdminUI(true);
-                document.getElementById('error-msg').style.display = 'none';
-                document.getElementById('password-input').value = '';
-            } else {
-                document.getElementById('error-msg').style.display = 'block';
-            }
-        }
+  async function fetchEntries() {
+    const container = document.getElementById('entries-container');
+    try {
+      const url = `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${encodeURIComponent(AIRTABLE_TABLE_NAME)}`;
+      const res = await fetch(url, {
+        headers: { Authorization: `Bearer ${AIRTABLE_TOKEN}` }
+      });
 
-        function logout() {
-            sessionStorage.removeItem('isAdmin');
-            updateAdminUI(false);
-        }
+      if (!res.ok) throw new Error('request failed');
 
-        function checkAuth() {
-            return sessionStorage.getItem('isAdmin') === 'true';
-        }
+      const data = await res.json();
+      allEntries = data.records.map(r => ({
+        id: r.id,
+        username: r.fields.Username || '',
+        rank: (r.fields.Rank || 'low').toLowerCase(),
+        reason: r.fields.Reason || '',
+        groups: r.fields.Groups || '',
+        date: r.fields.DateAdded || ''
+      }));
 
-        function updateAdminUI(isAdmin) {
-            const adminPanel = document.getElementById('admin-panel');
-            const loginSection = document.getElementById('login-section');
-            const adminCols = document.querySelectorAll('.admin-only');
+      document.getElementById('total-count').textContent = allEntries.length;
+      renderEntries();
+    } catch (err) {
+      container.innerHTML = `<div class="state-msg error">Impossible de charger le registre. Vérifie la configuration Airtable dans le code.</div>`;
+      document.getElementById('total-count').textContent = '0';
+    }
+  }
 
-            if (isAdmin) {
-                adminPanel.classList.remove('hidden');
-                loginSection.classList.add('hidden');
-                adminCols.forEach(col => col.classList.remove('hidden'));
-            } else {
-                adminPanel.classList.add('hidden');
-                loginSection.classList.remove('hidden');
-                adminCols.forEach(col => col.classList.add('hidden'));
-            }
-            renderTable();
-        }
+  function renderEntries() {
+    const container = document.getElementById('entries-container');
+    const filtered = allEntries.filter(e => {
+      const matchesRank = currentRankFilter === 'all' || e.rank === currentRankFilter;
+      const matchesSearch = e.username.toLowerCase().includes(currentSearch.toLowerCase());
+      return matchesRank && matchesSearch;
+    });
 
-        function addPlayer() {
-            if (!checkAuth()) return;
-            const name = document.getElementById('player-name').value.trim();
-            const reason = document.getElementById('player-reason').value.trim();
+    if (filtered.length === 0) {
+      container.innerHTML = `<div class="state-msg">Aucun joueur ne correspond à cette recherche.</div>`;
+      return;
+    }
 
-            if (!name || !reason) {
-                alert("Please fill in both the username and reason.");
-                return;
-            }
+    container.innerHTML = filtered.map(e => `
+      <div class="entry">
+        <div>
+          <div class="username">${escapeHtml(e.username)}</div>
+          ${e.groups ? `<div class="groups">${escapeHtml(e.groups)}</div>` : ''}
+        </div>
+        <div><span class="rank ${e.rank}">${e.rank}</span></div>
+        <div class="reason">${escapeHtml(e.reason)}</div>
+        <div class="date">${escapeHtml(e.date)}</div>
+      </div>
+    `).join('');
+  }
 
-            const list = getBlacklist();
-            list.push({
-                id: Date.now(),
-                name: name,
-                reason: reason,
-                date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
-            });
+  function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
 
-            saveBlacklist(list);
-            document.getElementById('player-name').value = '';
-            document.getElementById('player-reason').value = '';
-        }
+  document.getElementById('search-input').addEventListener('input', (e) => {
+    currentSearch = e.target.value;
+    renderEntries();
+  });
 
-        function deletePlayer(id) {
-            if (!checkAuth()) return;
-            let list = getBlacklist();
-            list = list.filter(item => item.id !== id);
-            saveBlacklist(list);
-        }
+  document.querySelectorAll('.chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      currentRankFilter = chip.dataset.rank;
+      renderEntries();
+    });
+  });
 
-        function renderTable() {
-            const list = getBlacklist();
-            const tbody = document.getElementById('blacklist-table');
-            const countTag = document.getElementById('player-count');
-            const isAdmin = checkAuth();
-            
-            tbody.innerHTML = '';
-            countTag.textContent = `${list.length} Listed`;
-
-            if (list.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="${isAdmin ? 4 : 3}" style="text-align: center; color: var(--text-muted); padding: 32px;">No blacklisted players recorded.</td></tr>`;
-                return;
-            }
-
-            list.forEach(item => {
-                const tr = document.createElement('tr');
-                let html = `
-                    <td><div class="player-badge"><span>${item.name}</span></div></td>
-                    <td style="color: var(--text-muted);">${item.reason}</td>
-                    <td style="color: var(--text-muted); font-size: 0.85rem;">${item.date}</td>
-                `;
-                if (isAdmin) {
-                    html += `<td><button class="btn btn-danger-sm" onclick="deletePlayer(${item.id})">Remove</button></td>`;
-                }
-                tr.innerHTML = html;
-                tbody.appendChild(tr);
-            });
-        }
-
-        window.onload = function() {
-            updateAdminUI(checkAuth());
-        };
-    </script>
+  fetchEntries();
+</script>
 </body>
 </html>
