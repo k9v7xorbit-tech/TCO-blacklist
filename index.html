@@ -21,7 +21,7 @@
 
     <h1>TCO Blacklist</h1>
 
-    <!-- PUBLIC SECTION (READ ONLY) -->
+    <!-- PUBLIC SECTION -->
     <div class="card">
         <h2>Blacklisted Players</h2>
         <table>
@@ -34,7 +34,6 @@
                 </tr>
             </thead>
             <tbody id="blacklist-table">
-                <!-- Players will be listed here -->
             </tbody>
         </table>
     </div>
@@ -58,17 +57,15 @@
     </div>
 
     <script>
-        // SHA-256 hash of password 'X9#vL2$mP7!kR4qW'
-        const PASSWORD_HASH = "815f15ca85f9502a50a3ee41a1a45749f55e5b3ee58129e612cb7cf5ff9b2e26";
+        // Password: AdminTCO2026!
+        const PASSWORD_HASH = "82dd8f1b672a9e334d70ef2417ec6e3cfda04ea7e909dafa8d264f33bd2f6430";
 
-        // SHA-256 Hash Function
         async function hashString(str) {
             const buffer = new TextEncoder().encode(str);
             const digest = await crypto.subtle.digest('SHA-256', buffer);
             return Array.from(new Uint8Array(digest)).map(b => b.toString(16).padStart(2, '0')).join('');
         }
 
-        // Get blacklist from localStorage
         function getBlacklist() {
             return JSON.parse(localStorage.getItem('tco_blacklist') || '[]');
         }
@@ -78,9 +75,8 @@
             renderTable();
         }
 
-        // Admin Login
         async function login() {
-            const input = document.getElementById('password-input').value;
+            const input = document.getElementById('password-input').value.trim();
             const inputHash = await hashString(input);
 
             if (inputHash === PASSWORD_HASH) {
@@ -102,7 +98,6 @@
             return sessionStorage.getItem('isAdmin') === 'true';
         }
 
-        // Toggle UI for Admin
         function updateAdminUI(isAdmin) {
             const adminPanel = document.getElementById('admin-panel');
             const loginSection = document.getElementById('login-section');
@@ -120,7 +115,6 @@
             renderTable();
         }
 
-        // Add Player
         function addPlayer() {
             if (!checkAuth()) return;
             const name = document.getElementById('player-name').value.trim();
@@ -144,7 +138,6 @@
             document.getElementById('player-reason').value = '';
         }
 
-        // Delete Player
         function deletePlayer(id) {
             if (!checkAuth()) return;
             let list = getBlacklist();
@@ -152,7 +145,6 @@
             saveBlacklist(list);
         }
 
-        // Render Table
         function renderTable() {
             const list = getBlacklist();
             const tbody = document.getElementById('blacklist-table');
@@ -175,7 +167,6 @@
             });
         }
 
-        // Initialize
         window.onload = function() {
             updateAdminUI(checkAuth());
         };
