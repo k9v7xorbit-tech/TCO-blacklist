@@ -3,57 +3,299 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TCO Blacklist</title>
+    <title>TCO Blacklist | Official Database</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: Arial, sans-serif; background-color: #121212; color: #ffffff; padding: 20px; }
-        h1, h2 { color: #ff3333; }
-        .card { background-color: #1e1e1e; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #333; }
-        input, button, textarea { padding: 10px; margin: 5px 0; width: 100%; box-sizing: border-box; background: #2a2a2a; color: white; border: 1px solid #444; border-radius: 4px; }
-        button { background-color: #ff3333; border: none; font-weight: bold; cursor: pointer; }
-        button:hover { background-color: #cc0000; }
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        th, td { border: 1px solid #333; padding: 10px; text-align: left; }
-        th { background-color: #2a2a2a; color: #ff3333; }
-        .hidden { display: none; }
+        :root {
+            --bg-color: #0d0f12;
+            --card-bg: rgba(22, 27, 34, 0.7);
+            --border-color: #30363d;
+            --accent-red: #ff4d4d;
+            --accent-red-hover: #e03e3e;
+            --text-main: #f0f6fc;
+            --text-muted: #8b949e;
+            --input-bg: #0d1117;
+            --success-green: #238636;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            padding: 40px 20px;
+            background-image: radial-gradient(circle at 50% 0%, rgba(255, 77, 77, 0.08), transparent 50%);
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        header h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--text-main);
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        header h1 span {
+            color: var(--accent-red);
+        }
+
+        header p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-top: 8px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        /* Table Design */
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th {
+            background-color: rgba(255, 255, 255, 0.02);
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        td {
+            padding: 16px;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.95rem;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .player-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        .tag-red {
+            background: rgba(255, 77, 77, 0.15);
+            color: var(--accent-red);
+            border: 1px solid rgba(255, 77, 77, 0.3);
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        /* Forms & Inputs */
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        label {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+        }
+
+        input[type="text"],
+        input[type="password"],
+        textarea {
+            width: 100%;
+            padding: 12px 14px;
+            background: var(--input-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-main);
+            font-size: 0.95rem;
+            transition: border-color 0.2s;
+        }
+
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: var(--accent-red);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 18px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            width: 100%;
+        }
+
+        .btn-primary {
+            background: var(--accent-red);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-red-hover);
+        }
+
+        .btn-secondary {
+            background: #21262d;
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+            width: auto;
+        }
+
+        .btn-secondary:hover {
+            background: #30363d;
+        }
+
+        .btn-danger-sm {
+            background: rgba(255, 77, 77, 0.15);
+            color: var(--accent-red);
+            border: 1px solid rgba(255, 77, 77, 0.3);
+            padding: 6px 12px;
+            font-size: 0.8rem;
+            width: auto;
+        }
+
+        .btn-danger-sm:hover {
+            background: var(--accent-red);
+            color: white;
+        }
+
+        .error-message {
+            color: var(--accent-red);
+            font-size: 0.85rem;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        @media (max-width: 600px) {
+            body { padding: 20px 12px; }
+            .card { padding: 16px; }
+        }
     </style>
 </head>
 <body>
 
-    <h1>TCO Blacklist</h1>
+    <div class="container">
+        <header>
+            <h1>TCO <span>Blacklist</span></h1>
+            <p>Official Public Registry & Enforcement Database</p>
+        </header>
 
-    <!-- PUBLIC SECTION -->
-    <div class="card">
-        <h2>Blacklisted Players</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>Roblox Username</th>
-                    <th>Reason</th>
-                    <th>Date</th>
-                    <th class="admin-only hidden">Action</th>
-                </tr>
-            </thead>
-            <tbody id="blacklist-table">
-            </tbody>
-        </table>
-    </div>
+        <!-- PUBLIC SECTION -->
+        <div class="card">
+            <div class="card-header">
+                <h2>Blacklisted Players</h2>
+                <span id="player-count" class="tag-red">0 Total</span>
+            </div>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Roblox Username</th>
+                            <th>Reason</th>
+                            <th>Date Added</th>
+                            <th class="admin-only hidden">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="blacklist-table">
+                    </tbody>
+                </table>
+            </div>
+        </div>
 
-    <!-- ADMIN LOGIN -->
-    <div class="card" id="login-section">
-        <h2>Admin Login</h2>
-        <input type="password" id="password-input" placeholder="Enter admin password">
-        <button onclick="login()">Log In</button>
-        <p id="error-msg" style="color: red; display: none;">Incorrect password!</p>
-    </div>
+        <!-- ADMIN LOGIN -->
+        <div class="card" id="login-section">
+            <h2>Admin Authentication</h2>
+            <p style="color: var(--text-muted); font-size: 0.85rem; margin: 6px 0 16px 0;">Sign in to add or manage blacklisted records.</p>
+            <div class="form-group">
+                <input type="password" id="password-input" placeholder="Enter admin passkey">
+            </div>
+            <button class="btn btn-primary" onclick="login()">Log In</button>
+            <p id="error-msg" class="error-message">Invalid administrator credentials.</p>
+        </div>
 
-    <!-- ADMIN PANEL -->
-    <div class="card hidden" id="admin-panel">
-        <h2>Admin Dashboard (Logged In)</h2>
-        <button onclick="logout()" style="background-color: #555;">Log Out</button>
-        <h3>Add Player</h3>
-        <input type="text" id="player-name" placeholder="Roblox Username">
-        <textarea id="player-reason" placeholder="Reason for blacklist"></textarea>
-        <button onclick="addPlayer()">Add to Blacklist</button>
+        <!-- ADMIN PANEL -->
+        <div class="card hidden" id="admin-panel">
+            <div class="card-header">
+                <h2>Admin Control Panel</h2>
+                <button class="btn btn-secondary" onclick="logout()">Log Out</button>
+            </div>
+            <div class="form-group">
+                <label for="player-name">Roblox Username</label>
+                <input type="text" id="player-name" placeholder="e.g. TargetUsername">
+            </div>
+            <div class="form-group">
+                <label for="player-reason">Reason for Blacklist</label>
+                <textarea id="player-reason" placeholder="Detail the violation..."></textarea>
+            </div>
+            <button class="btn btn-primary" onclick="addPlayer()">Add Player Record</button>
+        </div>
     </div>
 
     <script>
@@ -121,7 +363,7 @@
             const reason = document.getElementById('player-reason').value.trim();
 
             if (!name || !reason) {
-                alert("Please fill in all fields!");
+                alert("Please fill in both the username and reason.");
                 return;
             }
 
@@ -130,7 +372,7 @@
                 id: Date.now(),
                 name: name,
                 reason: reason,
-                date: new Date().toLocaleDateString('en-US')
+                date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
             });
 
             saveBlacklist(list);
@@ -148,19 +390,26 @@
         function renderTable() {
             const list = getBlacklist();
             const tbody = document.getElementById('blacklist-table');
+            const countTag = document.getElementById('player-count');
             const isAdmin = checkAuth();
+            
             tbody.innerHTML = '';
+            countTag.textContent = `${list.length} Listed`;
 
             if (list.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="' + (isAdmin ? 4 : 3) + '">No blacklisted players found.</td></tr>';
+                tbody.innerHTML = `<tr><td colspan="${isAdmin ? 4 : 3}" style="text-align: center; color: var(--text-muted); padding: 32px;">No blacklisted players recorded.</td></tr>`;
                 return;
             }
 
             list.forEach(item => {
                 const tr = document.createElement('tr');
-                let html = `<td><strong>${item.name}</strong></td><td>${item.reason}</td><td>${item.date}</td>`;
+                let html = `
+                    <td><div class="player-badge"><span>${item.name}</span></div></td>
+                    <td style="color: var(--text-muted);">${item.reason}</td>
+                    <td style="color: var(--text-muted); font-size: 0.85rem;">${item.date}</td>
+                `;
                 if (isAdmin) {
-                    html += `<td><button onclick="deletePlayer(${item.id})" style="padding: 5px 10px;">Remove</button></td>`;
+                    html += `<td><button class="btn btn-danger-sm" onclick="deletePlayer(${item.id})">Remove</button></td>`;
                 }
                 tr.innerHTML = html;
                 tbody.appendChild(tr);
